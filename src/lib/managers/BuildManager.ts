@@ -5,13 +5,13 @@
  * 3) Запрашивает у ComponentManager общие компоненты
  */
 
-import { REGEX, STATIC } from "@lib/constants";
+import { PUBLIC, REGEX, STATIC } from "@lib/constants";
 import { logger } from "@lib/utils/logging";
 
 import path from 'path'
 import fs from 'fs'
-import { Component } from "./ComponentManager";
-import { isFile } from "@lib/utils/files";
+import { Component, componentManager } from "./ComponentManager";
+import { ensureDirExists, getPathAfterDir, isFile } from "@lib/utils/files";
 
 class BuildManager {
 
@@ -21,25 +21,17 @@ class BuildManager {
     this.slots = {}
   }
 
-  insertIntoSlot(
-    content: string,
-    component: Component,
-    options?: {
-      onlyOnce: boolean
-    }) {
-
-    const resolvedOptions = { test: false, ...options };
-
-
-
-  }
-
   buildStatic() {
 
   }
 
   buildFile(filePath: string) {
-
+    let fileContent = fs.readFileSync(filePath, 'utf8')
+    fileContent = componentManager.insertComponent(fileContent, "allRegistered")
+    const publicPath = path.join(PUBLIC.DIR, "index.html")
+    logger.debug(`filepath: ${filePath}, publicPath: ${publicPath}`)
+    ensureDirExists(PUBLIC.DIR)
+    fs.writeFileSync(publicPath, fileContent, 'utf8')
   }
 
   registerStatic() {

@@ -22,8 +22,6 @@ export class ComponentManager {
 
 
   registerComponent(newComponent: Component) {
-    logger.debug(`Trying to register new component: ${JSON.stringify(newComponent)}`)
-    logger.debug(this.components)
 
     if (newComponent.name === "") {
       logger.error(`Cannot register component with empty name! ${JSON.stringify(newComponent)}`)
@@ -36,18 +34,16 @@ export class ComponentManager {
     }
 
     const index = this.components.findIndex(component => component.name === newComponent.name);
-    logger.debug(`Component index ${index}`)
 
     if (index !== -1) {
       this.components[index] = newComponent
-      logger.debug(`Component "${newComponent.name}" already exists, replaced.`)
+      logger.info(`Component "${newComponent.name}" already exists, replaced.`)
 
     } else {
       this.components.push(newComponent)
-      logger.debug(`Component "${newComponent.name}" added.`)
+      logger.info(`Component "${newComponent.name}" added.`)
     }
 
-    logger.debug(`New this.components ${JSON.stringify(this.components)}`)
   }
 
   // this works, ok?
@@ -59,8 +55,6 @@ export class ComponentManager {
 
   getComponent(name: string): Component | undefined {
     const index = this.components.findIndex(component => component.name === name);
-
-    logger.debug(this.components)
 
     if (index === -1) {
       logger.error(`Component "${name}" does not exists!`)
@@ -96,7 +90,7 @@ export class ComponentManager {
         const fileSlots = [...fileContent.matchAll(REGEX.COMPONENT)].map(match => match[1]);
         components = fileSlots
           .map(slot => this.getComponent(slot))
-          .filter((component): component is Component => component !== null);
+          .filter((component): component is Component => component !== undefined);
         break;
 
       case "byName":
@@ -111,10 +105,10 @@ export class ComponentManager {
         }
 
         components.push(component)
-
         break;
     }
 
+    logger.debug(components)
 
     fileContent = fileContent.replace(REGEX.COMPONENT, (match, g1) => {
       if (replaced && resolvedOptions.onlyOnce) {

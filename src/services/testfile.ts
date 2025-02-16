@@ -13,7 +13,9 @@ function main() {
   //logger.debug(storageManager.slotMap)  
 
   componentManager.buildAllComponents()
-  logger.debug(componentManager.insertComponent("[component:footer][component:base_url]test", "byName", { componentName: "base_url" }))
+  //logger.debug(componentManager.insertComponent("[component:footer][component:base_url]test", "byName", { componentName: "base_url" }))
+
+  buildManager.buildFile(path.join(STATIC.DIR, "index.html"))
 
   //componentManager.buildAllComponents()
   //componentManager.updateComponent('f')
