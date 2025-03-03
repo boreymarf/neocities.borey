@@ -3,9 +3,8 @@
   "version": "1.0.2",
   "main": "build.js",
   "scripts": {
-    "build": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/services/build.ts",
-    "build:debug": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/services/build.ts --debug",
-    "test": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/services/testfile.ts --debug",
+    "build": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/main.ts",
+    "build:debug": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/services/main.ts --debug",
     "watch": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/services/watch.ts --debug"
   },
   "author": "hyprborey",

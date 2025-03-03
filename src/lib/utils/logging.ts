@@ -1,7 +1,7 @@
 import { createConsola } from "consola";
 
 export const logger = createConsola({
-   level: 4,
+  level: 4,
   //fancy: false
   // formatOptions: {
   //     columns: 80,
