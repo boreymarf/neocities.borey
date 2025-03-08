@@ -1,0 +1,8 @@
+{
+  "componentName": "clock",
+  "buildFilePath": "build.ts",
+  "dependencies": {
+    "libraries": [],
+    "components": []
+  }
+}

@@ -8,9 +8,8 @@ export class Build {
   constructor(core: Core) {
     this.core = core
 
-    core.once("components:ready", () => {
-      this.init()
-    })
+
+    core.once("components:ready", () => this.init().catch(console.error))
   }
 
 

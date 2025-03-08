@@ -1,13 +1,15 @@
 import { EventEmitter } from 'events';
 import { logger } from '@lib/utils/logging';
 import { AppEvents } from './events';
+import { Directory, IDirectory, IFile } from '@lib/classes/directory';
 
 export class Core {
-  private data: Record<string, any> = {}
+  private data: IDirectory
   private eventEmitter: EventEmitter;
 
   constructor() {
     this.eventEmitter = new EventEmitter();
+    this.data = new Directory()
   }
 
   public async init(): Promise<void> {
@@ -20,16 +22,73 @@ export class Core {
   }
 
   // Data
+  // HACK: Very incomplete and sucks ass   
+  public add(item: IFile, path: string) {
+    const dirs: string[] = path.split("/")
 
+    logger.debug(dirs)
 
+    let currentDir: IDirectory = this.data
+
+    for (let i = 0; i < dirs.length; i++) {
+      const dir = this.data[dirs[i]]
+
+      logger.debug(`dirs[i]: ${dirs}`)
+      logger.debug(`this.data[dirs[i]]: ${this.data[dirs[i]]}`)
+      logger.debug(`dir ${dir}`)
+
+      if (!dir) {
+        currentDir.add(new Directory(dirs[i]))          // Create new directory
+        currentDir = currentDir[dirs[i]] as IDirectory  // Get the new directory that was just created
+      } else {
+        currentDir = dir as IDirectory
+      }
+
+      currentDir.add(item)
+
+      logger.info(`Added "${item.name}" to the path "${path}"`)
+    }
+
+  }
+
+  public get(path: string): IFile | IDirectory | undefined {
+    const dirs: string[] = path.split("/")
+    let currentDir: IDirectory = this.data
+
+    for (let i = 0; i < dirs.length - 1; i++) {
+      const dir = this.data[dirs[i]];
+
+      if (!dir) {
+        throw new Error(`Could not find dir "${dirs[i]}" at path "${path}"`)
+      }
+
+      if (!(dir instanceof Directory)) {
+        throw new Error(`Cannot proceed as "${dirs[i]}" in path "${path}" is not a directory!`)
+      };
+
+      currentDir = dir
+
+      logger.debug(`dir ${JSON.stringify(dir)}`)
+    }
+
+    const target = currentDir.get(dirs[dirs.length - 1])
+
+    if (!target) {
+      throw new Error(`Could not find file at path "${path}"`)
+    }
+
+    logger.debug(target)
+
+    return target
+  }
 
   // Events
   public emit<T extends keyof AppEvents>(
     event: T,
     ...args: AppEvents[T] extends undefined ? [] : [AppEvents[T]]
   ): void {
-    this.eventEmitter.emit(event, ...args);
     logger.debug(`Event "${String(event)}" emitted`, args);
+    this.eventEmitter.emit(event, ...args);
   }
 
   public on<T extends keyof AppEvents>(
