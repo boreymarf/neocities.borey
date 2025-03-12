@@ -1,5 +1,7 @@
 import { Core } from "@lib/core/core";
-import { logger } from "@lib/utils/logging";
+import { createLogger } from "@lib/utils/logging";
+
+const logger = createLogger("BUILD")
 
 export class Build {
 

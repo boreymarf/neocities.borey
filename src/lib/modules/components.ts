@@ -1,9 +1,10 @@
 import { Core } from '@lib/core/core'
 import { isFile } from '@lib/utils/files'
-import { logger } from '@lib/utils/logging'
+import { createLogger } from '@lib/utils/logging'
 import { existsSync, readdirSync, readFileSync } from 'fs'
 import path from 'path'
 
+const logger = createLogger("COMPONENTS")
 const COMPONENTS_DIR_PATH = path.resolve("./src/components")
 
 export interface IComponent {

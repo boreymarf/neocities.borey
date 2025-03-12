@@ -1,6 +1,7 @@
 {
   "componentName": "clock",
   "buildFilePath": "build.ts",
+  "outputFileName": "clock.html",
   "dependencies": {
     "libraries": [],
     "components": []

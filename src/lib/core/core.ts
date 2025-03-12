@@ -1,7 +1,9 @@
 import { EventEmitter } from 'events';
-import { logger } from '@lib/utils/logging';
+import { createLogger } from '@lib/utils/logging';
 import { AppEvents } from './events';
 import { Directory, IDirectory, IFile } from '@lib/classes/directory';
+
+const logger = createLogger("CORE")
 
 export class Core {
   private data: IDirectory

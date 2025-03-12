@@ -3,15 +3,18 @@
   "version": "1.0.2",
   "main": "build.js",
   "scripts": {
-    "build": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/main.ts",
-    "build:debug": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/services/main.ts --debug",
-    "watch": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/services/watch.ts --debug",
-    "this": "ts-node --project ./tsconfig.json -r tsconfig-paths/register src/this.ts"
+    "build": "ts-node --swc --project ./tsconfig.json -r tsconfig-paths/register src/main.ts",
+    "build:debug": "ts-node --swc --project ./tsconfig.json -r tsconfig-paths/register src/services/main.ts --debug",
+    "watch": "ts-node --swc --project ./tsconfig.json -r tsconfig-paths/register src/services/watch.ts --debug",
+    "this": "ts-node --swc --project ./tsconfig.json -r tsconfig-paths/register src/this.ts"
   },
   "author": "hyprborey",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@swc-node/register": "^1.10.9",
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.11.9",
     "@types/jest": "^29.5.14",
     "@types/minimist": "^1.2.5",
     "@types/mock-fs": "^4.13.4",

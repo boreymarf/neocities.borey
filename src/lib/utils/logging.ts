@@ -1,4 +1,4 @@
-import { createConsola } from "consola";
+import { createConsola, ConsolaInstance } from "consola";
 
 export const logger = createConsola({
   level: 4,
@@ -10,3 +10,7 @@ export const logger = createConsola({
   //     date: false,
   // },
 });
+
+export function createLogger(tag: string): ConsolaInstance {
+  return logger.withTag(tag);
+}
