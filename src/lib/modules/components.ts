@@ -100,9 +100,10 @@ export class Components {
 
       run(componentBuildPath, path.resolve("./dist"))
 
-      const componentFilePath = path.join(OUTPUT_DIR, component.name)
+      const componentFilePath = path.join(OUTPUT_DIR, component.config.outputFileName)
       const componentFile: IFile = {
         name: component.name,
+        type: "file",
         content: componentFilePath
       }
 

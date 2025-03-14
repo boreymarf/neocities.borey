@@ -114,10 +114,4 @@ export abstract class Component {
 
     process.exit(0)
   }
-
-  protected replace(content: string, target: string, replacement: string) {
-    const sanitazedTarget = target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`\\{\\{\\s*${sanitazedTarget}\\s*\\}\\}`, 'g');
-    return content.replace(regex, replacement);
-  }
 }

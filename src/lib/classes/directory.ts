@@ -2,11 +2,13 @@ import { logger } from "@lib/utils/logging";
 
 export interface IFile {
   name: string;
+  type: "file"
   content: any;
 }
 
 export interface IDirectory {
   name: string;
+  type: "directory"
   items: (IFile | IDirectory)[];
   add(item: IFile | IDirectory): void;
   get(name: string): IFile | IDirectory | undefined;
@@ -17,14 +19,18 @@ export interface IDirectory {
 
 // I think this implementation sucks ass
 // but I'm too tired to change it
+// [key: string] is used for recursive dir creating
+// Everyday I wonder, why the fuck I did that
 export class Directory implements IDirectory {
   public name: string;
+  public type: "directory"
   public items: (IFile | IDirectory)[]
   [key: string]: IFile | IDirectory | string | (IFile | IDirectory)[] | Function | undefined;
 
   constructor(name: string = 'root') {
     this.name = name;
     this.items = []
+    this.type = "directory"
 
     return new Proxy(this, {
       get: (target, prop) => {

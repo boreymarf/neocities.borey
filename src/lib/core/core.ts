@@ -28,13 +28,12 @@ export class Core {
   public add(item: IFile, path: string) {
     const dirs: string[] = path.split("/")
 
-    logger.debug(dirs)
-
     let currentDir: IDirectory = this.data
 
     for (let i = 0; i < dirs.length; i++) {
       const dir = this.data[dirs[i]]
 
+      // Recursively create directories if they don't exist
       if (!dir) {
         currentDir.add(new Directory(dirs[i]))          // Create new directory
         currentDir = currentDir[dirs[i]] as IDirectory  // Get the new directory that was just created
@@ -67,7 +66,6 @@ export class Core {
 
       currentDir = dir
 
-      logger.debug(`dir ${JSON.stringify(dir)}`)
     }
 
     const target = currentDir.get(dirs[dirs.length - 1])
@@ -75,8 +73,6 @@ export class Core {
     if (!target) {
       throw new Error(`Could not find file at path "${path}"`)
     }
-
-    logger.debug(target)
 
     return target
   }

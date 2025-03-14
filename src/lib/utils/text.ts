@@ -11,3 +11,8 @@ export function getFirstWords(content: string, amount: number): string[] {
   return firstWords;
 }
 
+export function replace(content: string, target: string, replacement: string) {
+  const sanitazedTarget = target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`\\{\\{\\s*${sanitazedTarget}\\s*\\}\\}`, 'g');
+  return content.replace(regex, replacement);
+}
