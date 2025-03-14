@@ -35,10 +35,6 @@ export class Core {
     for (let i = 0; i < dirs.length; i++) {
       const dir = this.data[dirs[i]]
 
-      logger.debug(`dirs[i]: ${dirs}`)
-      logger.debug(`this.data[dirs[i]]: ${this.data[dirs[i]]}`)
-      logger.debug(`dir ${dir}`)
-
       if (!dir) {
         currentDir.add(new Directory(dirs[i]))          // Create new directory
         currentDir = currentDir[dirs[i]] as IDirectory  // Get the new directory that was just created
@@ -49,6 +45,7 @@ export class Core {
       currentDir.add(item)
 
       logger.info(`Added "${item.name}" to the path "${path}"`)
+      //logger.info(JSON.stringify(this.data))
     }
 
   }

@@ -3,7 +3,14 @@ import { Core } from "@lib/core/core"
 import { logger } from "@lib/utils/logging";
 
 // Mocking logger
-logger.mockTypes((_typeName, _type) => jest.fn());
+jest.mock('@lib/utils/logging', () => ({
+  createLogger: jest.fn(() => ({
+    info: jest.fn(),    // Mock the `log` method
+    warn: jest.fn(),   // Mock other methods if needed
+    error: jest.fn(),
+    debug: jest.fn()
+  })),
+}));
 
 describe("core", () => {
 

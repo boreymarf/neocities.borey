@@ -4,25 +4,16 @@ import { createLogger } from "./logging";
 
 const TEMP_DIR = path.resolve("./.temp")
 
-export type ComponentMessage =
-  | {
-    type: 'build';
-    config: {
-      outputDir: string;
-    };
-  }
-  | {
-    type: 'result';
-    status: 'success' | 'failure';
-    data: string;
-    outputPath: string;
-  };
+export interface BaseMessage {
+  readonly type: string;
+}
 
 
-export function run(sourcePath: string, outputDir: string, name?: string) {
+// TODO: Add timer of how long the process has been running
+export function run(sourcePath: string, outputDir: string) {
 
   const fullSourcePath = path.resolve(process.cwd(), sourcePath)
-  const logger = createLogger(name || "CHILD")
+  const logger = createLogger("CHILD")
 
   const child = fork(fullSourcePath, {
     execArgv: [
@@ -33,9 +24,13 @@ export function run(sourcePath: string, outputDir: string, name?: string) {
     cwd: process.cwd()
   })
 
-  // TODO: Make it pass on the consola log data instead of console output
-  child.stdout?.on('data', (data) => logger.log(`${data}`.trim()));
-  child.stderr?.on('data', (data) => logger.error(`${data}`.trim()));
+  //child.stdout?.on('data', (data) => logger.log(`${data}`.trim()));
+  //child.stderr?.on('data', (data) => logger.error(`${data}`.trim()));
+
+  // Handle output
+  //child.on('message', (message: any) => {
+  //  logger.log(message);
+  //});
 
   // Handle exit
   child.on('exit', (code) => {
@@ -44,15 +39,14 @@ export function run(sourcePath: string, outputDir: string, name?: string) {
     }
   });
 
-  //child.send({
-  //  task: 'build',
-  //  config: { outputDir: outputDir || TEMP_DIR }
-  //});
-
+  // Start building
+  // TODO: Since this needs to be universal, rework this part
+  // And add BaseMessage type as one of the arg of the run function
   child.send({
     type: "build",
-    config: {
-      outputDir: outputDir
+    buildConfig: {
+      outputDir: outputDir || TEMP_DIR,
+      componentDir: path.dirname(sourcePath)
     }
-  } satisfies ComponentMessage)
+  })
 }

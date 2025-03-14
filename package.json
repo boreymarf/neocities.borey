@@ -4,17 +4,17 @@
   "main": "build.js",
   "scripts": {
     "build": "ts-node --swc --project ./tsconfig.json -r tsconfig-paths/register src/main.ts",
-    "build:debug": "ts-node --swc --project ./tsconfig.json -r tsconfig-paths/register src/services/main.ts --debug",
+    "build:debug": "ts-node --swc --project ./tsconfig.json -r tsconfig-paths/register src/main.ts --debug",
     "watch": "ts-node --swc --project ./tsconfig.json -r tsconfig-paths/register src/services/watch.ts --debug",
     "this": "ts-node --swc --project ./tsconfig.json -r tsconfig-paths/register src/this.ts"
   },
-  "author": "hyprborey",
+  "author": "boreymarf",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@swc-node/register": "^1.10.9",
-    "@swc/cli": "^0.6.0",
+    "@swc-node/register": "^1.10.10",
     "@swc/core": "^1.11.9",
+    "@swc/jest": "^0.2.37",
     "@types/jest": "^29.5.14",
     "@types/minimist": "^1.2.5",
     "@types/mock-fs": "^4.13.4",
@@ -23,7 +23,6 @@
     "jest": "^29.7.0",
     "minimist": "^1.2.8",
     "mock-fs": "^5.4.1",
-    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.2"
@@ -31,8 +30,7 @@
   "dependencies": {
     "consola": "^3.4.0",
     "dayjs": "^1.11.13",
-    "slugify": "^1.6.6",
-    "toml": "^3.0.0",
-    "yaml": "^2.6.1"
+    "json5": "^2.2.3",
+    "slugify": "^1.6.6"
   }
 }

@@ -1,9 +1,14 @@
 {
-  "componentName": "clock",
+  "name": "header",
   "buildFilePath": "build.ts",
-  "outputFileName": "clock.html",
+  "outputFileName": "header.html",
   "dependencies": {
     "libraries": [],
     "components": []
+  },
+  settings: {
+    links: {
+
+    }
   }
 }

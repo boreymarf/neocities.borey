@@ -9,4 +9,4 @@ import path from "path";
 const logger = createLogger("THIS")
 logger.start("Start of the THIS session")
 
-run(path.resolve("./src/components/clock/build.ts"), "dist/")
+run(path.resolve("./src/components/header/build.ts"), "dist/")

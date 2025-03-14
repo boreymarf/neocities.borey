@@ -10,3 +10,4 @@ export function getFirstWords(content: string, amount: number): string[] {
   const firstWords = words.slice(0, amount);
   return firstWords;
 }
+

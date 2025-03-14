@@ -2,7 +2,7 @@ import { logger } from "@lib/utils/logging";
 
 export interface IFile {
   name: string;
-  content: string;
+  content: any;
 }
 
 export interface IDirectory {

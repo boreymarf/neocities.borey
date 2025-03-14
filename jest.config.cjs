@@ -2,7 +2,8 @@
 module.exports = {
   testEnvironment: "node",
   transform: {
-    "^.+.tsx?$": ["ts-jest", {}],
+    //"^.+.tsx?$": ["ts-jest", {}],
+    "^.+\\.(t|j)sx?$": ["@swc/jest"],
   },
   moduleNameMapper: {
     "^@lib/(.*)$": "<rootDir>/src/lib/$1",
