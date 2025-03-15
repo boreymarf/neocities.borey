@@ -6,22 +6,41 @@ import path from 'path'
 import JSON5 from 'json5'
 import { run } from '@lib/utils/parent'
 import { IFile } from '@lib/classes/directory'
+import { COMPONENTS_DIR_PATH, DIST_DIR, OUTPUT_DIR } from '@lib/constants/directories'
+import { BuildMessage } from '@lib/types/messages'
 
 const logger = createLogger("COMPONENTS")
-const COMPONENTS_DIR_PATH = path.resolve("./src/components")
-const OUTPUT_DIR = path.resolve("dist/")
 
 export interface IComponent {
-  name: string,
-  dir: string,
+  name: string
+
+  // Contains absolute paths, generated during component building
+  // Used by other modules to get component content
+  absolutePaths: {
+    componentDir: string;
+    buildFile: string;
+    outputs: {
+      html: string | Record<string, string>;
+      css?: string;
+      js?: string;
+      assets?: string;
+    };
+  };
+
+  // Copies config.json5 file every component has
   config: {
-    outputFileName: string,
-    buildFilePath: string,
+    buildFilePath: string;
+    output: {
+      html: string | Record<string, string>;
+      css?: string;
+      js?: string;
+      assets?: string;
+    };
     dependencies: {
-      components: string[],
-      libraries: string[]
-    }
-  }
+      components: string[];
+      libraries: string[];
+    };
+  };
 }
 
 export class Components {
@@ -52,35 +71,57 @@ export class Components {
 
     logger.info("Scanning components folder for directories...")
 
+    // Read all dirs in the components directory
     const dirs = readdirSync(COMPONENTS_DIR_PATH, { recursive: false, encoding: "utf8" })
-
     for (let i = 0; i < dirs.length; i++) {
 
       const dir = dirs[i];
       const dirPath = path.resolve(COMPONENTS_DIR_PATH, dir)
-      const infoPath = path.resolve(dirPath, "config.json5")
+      const configPath = path.resolve(dirPath, "config.json5")
 
       // Checks
       if (isFile(dir)) {
         continue
       }
-      if (!existsSync(infoPath)) {
-        logger.error(`Component at path "${dirPath}" does not contain config.json5`)
+      if (!existsSync(configPath)) {
+        logger.error(`Component at path "${dirPath}" does not contain config.json5!`)
+        continue
       }
 
-      // Parsing
-      const config = JSON5.parse(readFileSync(infoPath, 'utf8'))
+      // Creating absolute paths
+      const config = JSON5.parse(readFileSync(configPath, 'utf8'))
       const component: IComponent = {
         name: config.name,
-        dir: path.join(COMPONENTS_DIR_PATH, dir),
+        absolutePaths: {
+          componentDir: dirPath,
+          buildFile: path.join(dirPath, config.buildFilePath),
+          outputs: {
+            html: path.join(DIST_DIR, config.output.html)
+          },
+        },
         config: config
       }
 
-      logger.info(`Added new component "${config.name}".`)
+      logger.debug(component)
 
-      // TODO: Component may be already exist in the array
-      // Add check for that
-      this.components.push(component)
+      // Some more checks
+      if (!existsSync(component.absolutePaths.buildFile)) {
+        logger.error(`Component at path "${dirPath}" does not contains buildFile!`)
+      }
+
+
+      // Check if such component already exists
+      const existingIndex = this.components.findIndex((c): c is IComponent =>
+        c.name === component.name
+      );
+
+      if (existingIndex !== -1) {
+        this.components.splice(existingIndex, 1, component);
+        logger.info(`Replaced component "${config.name}" with the new information.`)
+      } else {
+        this.components.push(component);
+        logger.info(`Added new component "${config.name}".`)
+      }
     }
 
     logger.info(`Found ${this.components.length} components in the components folder.`)
@@ -94,17 +135,21 @@ export class Components {
 
 
   public async buildAll() {
+    logger.info("Starting building all known modules...")
+
     for (let i = 0; i < this.components.length; i++) {
       const component: IComponent = this.components[i];
-      const componentBuildPath = path.join(component.dir, component.config.buildFilePath)
+      const buildFilePath = component.absolutePaths.buildFile
+      const buildMessage: BuildMessage = {
+        type: "build",
+        data: component
+      }
 
-      run(componentBuildPath, path.resolve("./dist"))
-
-      const componentFilePath = path.join(OUTPUT_DIR, component.config.outputFileName)
+      run(buildFilePath, buildMessage)
       const componentFile: IFile = {
         name: component.name,
         type: "file",
-        content: componentFilePath
+        content: component
       }
 
       this.core.add(componentFile, "components")

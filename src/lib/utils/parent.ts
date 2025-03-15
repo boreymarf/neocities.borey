@@ -1,20 +1,15 @@
 import { fork } from "child_process";
 import path from 'path'
 import { createLogger } from "./logging";
-
-const TEMP_DIR = path.resolve("./.temp")
-
-export interface BaseMessage {
-  readonly type: string;
-}
-
+import { BaseMessage, BuildMessage } from "@lib/types/messages";
 
 // TODO: Add timer of how long the process has been running
-export function run(sourcePath: string, outputDir: string) {
+export function run(sourcePath: string, message?: BaseMessage) {
 
   const fullSourcePath = path.resolve(process.cwd(), sourcePath)
   const logger = createLogger("CHILD")
 
+  // Configuration
   const child = fork(fullSourcePath, {
     execArgv: [
       '-r', '@swc-node/register',
@@ -24,13 +19,15 @@ export function run(sourcePath: string, outputDir: string) {
     cwd: process.cwd()
   })
 
-  //child.stdout?.on('data', (data) => logger.log(`${data}`.trim()));
-  //child.stderr?.on('data', (data) => logger.error(`${data}`.trim()));
+  child.stdout?.on('data', (data) => logger.log(`${data}`.trim()));
+  child.stderr?.on('data', (data) => logger.error(`${data}`.trim()));
 
-  // Handle output
-  //child.on('message', (message: any) => {
-  //  logger.log(message);
-  //});
+  //Handle output
+  child.on('message', (message: any) => {
+    if (message.type === "result") {
+
+    }
+  });
 
   // Handle exit
   child.on('exit', (code) => {
@@ -39,14 +36,8 @@ export function run(sourcePath: string, outputDir: string) {
     }
   });
 
-  // Start building
-  // TODO: Since this needs to be universal, rework this part
-  // And add BaseMessage type as one of the arg of the run function
-  child.send({
-    type: "build",
-    buildConfig: {
-      outputDir: outputDir || TEMP_DIR,
-      componentDir: path.dirname(sourcePath)
-    }
-  })
+  // If message provided, send it
+  if (message) {
+    child.send(message)
+  }
 }

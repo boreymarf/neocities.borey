@@ -11,7 +11,7 @@ class Header extends Component {
     const link = this.readFile("src/link.html")
     const output = replace(base, "link", link)
 
-    this.output(output)
+    this.output({ html: output })
   }
 
 }

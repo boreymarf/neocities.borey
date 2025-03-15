@@ -43,7 +43,7 @@ export class Core {
 
       currentDir.add(item)
 
-      logger.info(`Added "${item.name}" to the path "${path}"`)
+      logger.info(`Added new ${item.type} "${item.name}" to the path "${path}"`)
       //logger.info(JSON.stringify(this.data))
     }
 

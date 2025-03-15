@@ -1,47 +1,30 @@
 import { ensureDirExists } from "@lib/utils/files";
 import { logger } from "@lib/utils/logging";
-import { BaseMessage } from "@lib/utils/parent";
+import { ResultMessage } from "@lib/types/messages";
+import { IComponent } from "@lib/modules/components";
 
 import path from 'path';
 import fs from 'fs';
 import JSON5 from 'json5'
 
-export interface BuildMessage extends BaseMessage {
-  type: "build",
-  buildConfig: BuildConfig
-}
-
-interface ResultMessage extends BaseMessage {
-  type: "result";
-  status: "success" | "failure";
-  data: string;
-  outputPath: string;
-  stats: {
-    size: number
-  }
-}
-
-interface BuildConfig {
-  componentDir: string,
-  outputDir: string
-}
-
 export abstract class Component {
 
-  protected buildConfig!: BuildConfig
-  protected componentDir!: string
-  protected componentConfig!: any
+  protected configuration!: IComponent
 
   constructor() {
 
     process.on('message', async (message: any) => {
-      this.buildConfig = message.buildConfig as BuildConfig
-      this.componentDir = this.buildConfig.componentDir
-      this.componentConfig = this.getConfig()
-
-      logger.info(this.buildConfig)
+      logger.info(message)
 
       if (message.type === "build") {
+
+        if (!message.data) {
+          logger.error("No data provided for component build!")
+          process.exit(1)
+        }
+
+        this.configuration = message.data
+
         try {
           this.build()
         } catch (error) {
@@ -50,7 +33,7 @@ export abstract class Component {
         }
       }
     })
-  }
+  };
 
   /**
    * This method is triggered when a build initiation message is received from the parent. 
@@ -62,20 +45,10 @@ export abstract class Component {
 
   protected readFile(relativePath: string): string {
 
-    const dir = this.buildConfig.componentDir
+    const dir = this.configuration.absolutePaths.componentDir
     const filePath = path.join(dir, relativePath)
 
     return fs.readFileSync(filePath, 'utf8')
-
-  }
-
-  protected getConfig(): string {
-
-    // Yeah I know I can make it one line
-    const dir = this.buildConfig.componentDir
-    const configPath = path.join(dir, "config.json5")
-    const configContent = fs.readFileSync(configPath, 'utf8')
-    return JSON5.parse(configContent)
 
   }
 
@@ -84,31 +57,29 @@ export abstract class Component {
    * with a filename defined in the `config.json5` configuration file. 
    * After writing the file, it terminates the child process.
    */
-  protected output(result: string): void {
+  protected output(result: { html: string, css?: string, js?: string }): void {
 
-    // Checks
-    if (!this.buildConfig.outputDir) {
-      throw Error("No outputDir in the buildConfig!");
+    let htmlOutput
+
+    // TODO: Doesn't work with arrays yet
+    if (typeof this.configuration.absolutePaths.outputs.html === 'string') {
+      ensureDirExists(path.dirname(this.configuration.absolutePaths.outputs.html));
+      htmlOutput = path.resolve(this.configuration.absolutePaths.outputs.html)
     }
 
-    if (!this.buildConfig.componentDir) {
-      throw Error("No componentDir in the buildConfig!")
-    }
+    fs.writeFileSync(htmlOutput!, result.html, 'utf8')
 
-    const outputDir = this.buildConfig.outputDir
-    ensureDirExists(outputDir)
-    const outputFilePath = path.resolve(outputDir, this.componentConfig.outputFileName)
-    fs.writeFileSync(outputFilePath, result, 'utf8')
+
+    //// Checks
+    //const outputDir = this.buildConfig.outputDir
+    //ensureDirExists(outputDir)
+    //const outputFilePath = path.resolve(outputDir, this.componentConfig.outputFileName)
+    //fs.writeFileSync(outputFilePath, result, 'utf8')
 
     if (process.send) {
       process.send({
         type: "result",
         status: "success",
-        data: result,
-        outputPath: outputFilePath,
-        stats: {
-          size: 0
-        }
       } satisfies ResultMessage)
     }
 

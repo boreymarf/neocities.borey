@@ -1,10 +1,17 @@
-{
-  "name": "header",
-  "buildFilePath": "build.ts",
-  "outputFileName": "header.html",
-  "dependencies": {
-    "libraries": [],
-    "components": []
+{ 
+  // Name of the component
+  name: "header",
+  // Relative file path to the build script
+  buildFilePath: "build.ts",
+  // Relative paths to the output
+  output: {
+    html: "nothingburger.html",
+    css: "",
+    js: "",
+  },
+  dependencies: {
+    libraries: [],
+    components: []
   },
   settings: {
     links: {
