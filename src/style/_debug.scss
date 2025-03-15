@@ -1,0 +1,8 @@
+@use "variables" as vars;
+
+#debug-component-container {
+  background-color: vars.$eerie-black;
+  padding: 50px;
+  min-width: 800px;
+  min-height: 50px;
+}

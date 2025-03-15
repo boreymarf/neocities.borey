@@ -1,20 +1,17 @@
+import { Args } from "@lib/constants/args";
 import { Core } from "@lib/core/core";
 import { Build } from "@lib/modules/build";
 import { Components } from "@lib/modules/components";
-import { debugComponents } from "@lib/modules/debugComponents";
+import { debug } from "@lib/modules/debug";
 import { logger } from "@lib/utils/logging";
-import minimist from "minimist";
-
-const args = minimist(process.argv.slice(2));
-const isDebug = args.debug === true;
 
 const core = new Core()
 new Components(core)
 new Build(core)
 
-if (isDebug) {
+if (Args.isDebug) {
   logger.info("Debug is on.")
-  new debugComponents(core)
+  new debug(core)
 }
 
 core.init()

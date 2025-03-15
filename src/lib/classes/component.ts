@@ -69,7 +69,6 @@ export abstract class Component {
 
     fs.writeFileSync(htmlOutput!, result.html, 'utf8')
 
-
     //// Checks
     //const outputDir = this.buildConfig.outputDir
     //ensureDirExists(outputDir)
