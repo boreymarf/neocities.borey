@@ -23,6 +23,7 @@ describe("core", () => {
   it("should add a file and retrieve it correctly", () => {
     const file: IFile = {
       name: "something",
+      type: "file",
       content: "12345"
     }
 
@@ -44,6 +45,7 @@ describe("core", () => {
   it("should throw an error when trying to access a file as a directory", () => {
     const file: IFile = {
       name: "file_not_a_dir",
+      type: "file",
       content: ""
     }
 
