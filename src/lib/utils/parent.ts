@@ -19,8 +19,8 @@ export function run(sourcePath: string, message?: BaseMessage) {
     cwd: process.cwd()
   })
 
-  child.stdout?.on('data', (data) => logger.log(`${data}`.trim()));
-  child.stderr?.on('data', (data) => logger.error(`${data}`.trim()));
+  //child.stdout?.on('data', (data) => logger.log(`${data}`.trim()));
+  //child.stderr?.on('data', (data) => logger.error(`${data}`.trim()));
 
   //Handle output
   child.on('message', (message: any) => {

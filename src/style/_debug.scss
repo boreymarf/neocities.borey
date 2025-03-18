@@ -1,8 +1,35 @@
+@use "reset";
 @use "variables" as vars;
 
-#debug-component-container {
+#debug-component-outer {
   background-color: vars.$eerie-black;
   padding: 50px;
   min-width: 800px;
   min-height: 50px;
+
+  display: flex;
+  flex-direction: column;
 }
+
+#debug-main {
+  height: 100%;
+  width: 100%;
+
+  padding: 50px;
+  background-color: vars.$eerie-black;
+
+  display: flex;
+  flex-direction: column;
+}
+
+#debug-component-container {
+  background-color: vars.$mine-shaft-black;
+
+  flex: 1;
+}
+
+//
+// #debug-component-container {
+//   display: flex;
+//   flex-direction: column;
+// }

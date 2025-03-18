@@ -2,12 +2,15 @@ import { Core } from '@lib/core/core'
 import { isFile } from '@lib/utils/files'
 import { createLogger } from '@lib/utils/logging'
 import { existsSync, readdirSync, readFileSync } from 'fs'
-import path from 'path'
-import JSON5 from 'json5'
 import { run } from '@lib/utils/parent'
 import { IFile } from '@lib/classes/directory'
-import { COMPONENTS_DIR_PATH, DIST_DIR, OUTPUT_DIR } from '@lib/constants/directories'
+import { COMPONENTS_DIR_PATH, DIST_DIR } from '@lib/constants/directories'
 import { BuildMessage } from '@lib/types/messages'
+import { Args } from '@lib/constants/args'
+
+import path from 'path'
+import JSON5 from 'json5'
+import chokidar from 'chokidar'
 
 const logger = createLogger("COMPONENTS")
 
@@ -64,6 +67,7 @@ export class Components {
 
     logger.info("Components module has been initialized.")
     this.core.emit("components:ready")
+
   }
 
 
@@ -76,8 +80,8 @@ export class Components {
     for (let i = 0; i < dirs.length; i++) {
 
       const dir = dirs[i];
-      const dirPath = path.resolve(COMPONENTS_DIR_PATH, dir)
-      const configPath = path.resolve(dirPath, "config.json5")
+      const dirPath = path.join(COMPONENTS_DIR_PATH, dir)
+      const configPath = path.join(dirPath, "config.json5")
 
       // Checks
       if (isFile(dir)) {
@@ -102,7 +106,7 @@ export class Components {
         config: config
       }
 
-      logger.debug(component)
+
 
       // Some more checks
       if (!existsSync(component.absolutePaths.buildFile)) {
@@ -122,6 +126,20 @@ export class Components {
         this.components.push(component);
         logger.info(`Added new component "${config.name}".`)
       }
+
+      if (Args.isWatch) {
+        logger.info(`Watcher added for component "${component.name}".`)
+
+        chokidar.watch(dirPath, {
+          persistent: true,
+          ignoreInitial: true
+        })
+          .on("all", (_event, _path) => {
+            logger.info(`Component file "${_path}" changed, rebuilding the component "${component.name}"`)
+            this.buildComponent(component)
+          })
+      }
+
     }
 
     logger.info(`Found ${this.components.length} components in the components folder.`)
@@ -139,26 +157,26 @@ export class Components {
 
     for (let i = 0; i < this.components.length; i++) {
       const component: IComponent = this.components[i];
-      const buildFilePath = component.absolutePaths.buildFile
-      const buildMessage: BuildMessage = {
-        type: "build",
-        data: component
-      }
-
-      run(buildFilePath, buildMessage)
-      const componentFile: IFile = {
-        name: component.name,
-        type: "file",
-        content: component
-      }
-
-      this.core.add(componentFile, "components")
+      this.buildComponent(component)
     }
   }
 
-  public async buildComponent(component: IComponent) {
+  public async buildComponent(component: IComponent): Promise<void> {
 
+    const buildFilePath = component.absolutePaths.buildFile
+    const buildMessage: BuildMessage = {
+      type: "build",
+      data: component
+    }
+
+    run(buildFilePath, buildMessage)
+    const componentFile: IFile = {
+      name: component.name,
+      type: "file",
+      content: component
+    }
+
+    this.core.add(componentFile, "components")
   }
-
 }
 

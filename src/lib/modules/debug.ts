@@ -54,10 +54,6 @@ export class debug {
       ensureDirExists(DEBUG_COMPONENT_PUBLIC)
       fs.writeFileSync(debugPagePath, debugPage, 'utf8')
 
-      logger.info("Component___")
-      logger.info(component)
-
-
       //const component: IFile = components.items[i] as IFile;
       //const componentContent = fs.readFileSync(component.content, 'utf8')
       //const debugTemplate = fs.readFileSync(DEBUG_COMPONENT_HTML, 'utf8')
