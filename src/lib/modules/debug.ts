@@ -19,7 +19,10 @@ export class debug {
   constructor(core: Core) {
     this.core = core
 
+    // BUG: Вызывает ошибку если *оба* модуля ещё не выполнили свой init()!
+    // Нужно сделать класс, который позволяет легко сделать проверку на завершение n-нного количества модулей.
     core.once("components:ready", () => this.init().catch(console.error))
+    //core.once("build:complete", () => this.init().catch(console.error))
   }
 
   private async init(): Promise<void> {
@@ -29,10 +32,14 @@ export class debug {
 
     logger.info("DebugComponents module finished initialization.")
 
-
+    this.core.on("component:changed", ({ component }) => {
+      logger.info(`Creating new debug component page for ${component.name}`)
+      this.createDebugComponentPage(component)
+    })
   }
 
   private debugComponents(): void {
+
 
     const components: IDirectory = this.core.get("components") as IDirectory
 
@@ -45,14 +52,7 @@ export class debug {
       }
 
       const component: IComponent = item.content
-      const componentHTML = fs.readFileSync(component.absolutePaths.outputs.html as string, 'utf8')
-
-      const debugTemplate = fs.readFileSync(DEBUG_COMPONENT_HTML, 'utf8')
-      const debugPage = replace(debugTemplate, "component", componentHTML)
-      const debugPagePath = path.join(DEBUG_COMPONENT_PUBLIC, `${component.name}.html`)
-
-      ensureDirExists(DEBUG_COMPONENT_PUBLIC)
-      fs.writeFileSync(debugPagePath, debugPage, 'utf8')
+      this.createDebugComponentPage(component)
 
       //const component: IFile = components.items[i] as IFile;
       //const componentContent = fs.readFileSync(component.content, 'utf8')
@@ -60,5 +60,20 @@ export class debug {
       //
       //logger.info(component)
     }
+  }
+
+  private createDebugComponentPage(component: IComponent): void {
+
+
+    const componentHTML = fs.readFileSync(component.absolutePaths.outputs.html as string, 'utf8')
+
+    logger.debug(`Component "${component.name}" has html: "${componentHTML}"`)
+
+    const debugTemplate = fs.readFileSync(DEBUG_COMPONENT_HTML, 'utf8')
+    const debugPage = replace(debugTemplate, "component", componentHTML)
+    const debugPagePath = path.join(DEBUG_COMPONENT_PUBLIC, `${component.name}.html`)
+
+    ensureDirExists(DEBUG_COMPONENT_PUBLIC)
+    fs.writeFileSync(debugPagePath, debugPage, 'utf8')
   }
 }

@@ -1,3 +1,5 @@
+import { IComponent } from "@lib/modules/components";
+
 export interface AppEvents {
 
   // Core
@@ -5,10 +7,9 @@ export interface AppEvents {
 
   // Components
   "components:ready": undefined;
-  "component:changed": { name: string; dependencies: string[] };
+  "component:changed": { component: IComponent };
 
   // Build
-  "build:start": { pages: string[] };
   "build:complete": { duration: number };
 
   // Blog

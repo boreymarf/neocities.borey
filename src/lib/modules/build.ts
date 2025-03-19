@@ -1,7 +1,7 @@
 import { Core } from "@lib/core/core";
 import { createLogger } from "@lib/utils/logging";
 import { Args } from "@lib/constants/args";
-import { ensureDirExists } from "@lib/utils/files";
+import { ensureDirExists, isFile } from "@lib/utils/files";
 import { DIST_DIR, PUBLIC_DIR } from "@lib/constants/directories";
 
 import sass from 'sass';
@@ -33,7 +33,7 @@ export class Build {
     }
 
     logger.info("Build module finished initialization.")
-
+    this.core.emit("build:complete", { duration: 0 })
   }
 
   public buildSASS() {
@@ -76,16 +76,18 @@ export class Build {
   public async createWatchers(): Promise<void> {
     logger.info("Watcher added for SCSS.")
 
-    chokidar.watch("./src/", {
+    // Create watcher for all scss files
+    const SRC_DIR = path.resolve("./src/")
+    chokidar.watch(SRC_DIR, {
       persistent: true,
       ignoreInitial: true,
-      ignored: [
-       /^.*(?<!\.scss)$/,     // Except SCSS files
-    ]
+      ignored: (path, stats) => stats?.isFile() && !path.endsWith('.scss') || false,
     })
       .on("all", (_event, _path) => {
-        logger.info(`SCSS file "${_path}" changed, rebuilding...`)
-        this.buildSASS()
+        if (isFile(_path)) {
+          logger.info(`SCSS file "${_path}" changed, rebuilding...`)
+          this.buildSASS()
+        }
       })
   }
 

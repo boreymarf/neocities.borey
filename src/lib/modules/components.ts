@@ -127,6 +127,7 @@ export class Components {
         logger.info(`Added new component "${config.name}".`)
       }
 
+      // Add watcher for every component if watch flag is set
       if (Args.isWatch) {
         logger.info(`Watcher added for component "${component.name}".`)
 
@@ -137,9 +138,9 @@ export class Components {
           .on("all", (_event, _path) => {
             logger.info(`Component file "${_path}" changed, rebuilding the component "${component.name}"`)
             this.buildComponent(component)
+            this.core.emit("component:changed", { component })
           })
       }
-
     }
 
     logger.info(`Found ${this.components.length} components in the components folder.`)
@@ -151,8 +152,7 @@ export class Components {
 
   }
 
-
-  public async buildAll() {
+  public buildAll() {
     logger.info("Starting building all known modules...")
 
     for (let i = 0; i < this.components.length; i++) {
@@ -161,7 +161,9 @@ export class Components {
     }
   }
 
-  public async buildComponent(component: IComponent): Promise<void> {
+  public buildComponent(component: IComponent): void {
+
+    logger.debug(`Building component ${component}...`)
 
     const buildFilePath = component.absolutePaths.buildFile
     const buildMessage: BuildMessage = {
