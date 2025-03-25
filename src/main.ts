@@ -1,10 +1,10 @@
-import { Args } from "@lib/constants/args";
-import { DIST_DIR, PUBLIC_DIR } from "@lib/constants/directories";
-import { Core } from "@lib/core/core";
-import { Build } from "@lib/modules/build";
-import { Components } from "@lib/modules/components";
-import { debug } from "@lib/modules/debug";
-import { logger } from "@lib/utils/logging";
+import { Args } from "@lib/constants/args.js";
+import { DIST_DIR, PUBLIC_DIR } from "@lib/constants/directories.js";
+import { Core } from "@lib/core/core.js";
+import { Build } from "@lib/modules/build.js";
+import { Components } from "@lib/modules/components.js";
+import { debug } from "@lib/modules/debug.js";
+import { logger } from "@lib/utils/logging.js";
 
 import fs from 'fs'
 

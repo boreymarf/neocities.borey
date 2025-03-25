@@ -1,7 +1,7 @@
-import { ensureDirExists } from "@lib/utils/files";
-import { logger } from "@lib/utils/logging";
-import { ResultMessage } from "@lib/types/messages";
-import { IComponent } from "@lib/modules/components";
+import { ensureDirExists } from "@lib/utils/files.js";
+import { logger } from "@lib/utils/logging.js";
+import { ResultMessage } from "@lib/types/messages.js";
+import { IComponent } from "@lib/modules/components.js";
 
 import path from 'path';
 import fs from 'fs';

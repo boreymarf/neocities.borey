@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
-import { createLogger } from '@lib/utils/logging';
-import { AppEvents } from './events';
-import { Directory, IDirectory, IFile } from '@lib/classes/directory';
+import { createLogger } from '@lib/utils/logging.js';
+import { AppEvents } from './events.js';
+import { Directory, IDirectory, IFile } from '@lib/classes/directory.js';
 
 const logger = createLogger("CORE")
 

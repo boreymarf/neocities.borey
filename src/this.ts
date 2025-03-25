@@ -2,11 +2,24 @@
 // THIS FILE IS USED PURELY FOR TESTING SNIPPETS OF CODE //
 // ----------------------------------------------------- //
 
-import { run } from "@lib/utils/parent";
-import { createLogger } from "@lib/utils/logging";
-import path from "path";
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const logger = createLogger("THIS")
-logger.start("Start of the THIS session")
+import ora from "ora";
 
-run(path.resolve("./src/components/header/build.ts"), "dist/")
+for (let i = 0; i < 10; i++) {
+  await testWithSpinner();
+}
+
+async function testWithSpinner() {
+  const spinner = ora({
+    text: "Building component...",
+    spinner: "dots", // Try "arc", "dots", "line", etc.
+  }).start();
+
+  // Simulate work (3 seconds)
+  await wait(1000);
+
+  spinner.succeed("Building component... done!");
+}
+
+await wait(10000000)

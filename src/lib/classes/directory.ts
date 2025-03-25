@@ -1,4 +1,4 @@
-import { logger } from "@lib/utils/logging";
+import { logger } from "@lib/utils/logging.js";
 
 export interface IFile {
   name: string;

@@ -1,5 +1,5 @@
-import { Component } from "@lib/classes/component";
-import { replace } from "@lib/utils/text";
+import { Component } from "@lib/classes/component.js";
+import { replace } from "@lib/utils/text.js";
 
 import fs from 'fs'
 import path from "path";
@@ -16,4 +16,8 @@ class Header extends Component {
 
 }
 
-new Header()
+try {
+  new Header()
+} catch (error) {
+  throw new Error(error)
+}

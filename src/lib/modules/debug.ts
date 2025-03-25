@@ -1,12 +1,12 @@
-import { Core } from "@lib/core/core"
-import { createLogger } from "@lib/utils/logging"
-import { IDirectory, IFile } from "@lib/classes/directory"
+import { Core } from "@lib/core/core.js"
+import { createLogger } from "@lib/utils/logging.js"
+import { IDirectory, IFile } from "@lib/classes/directory.js"
 import path from "path"
 import fs from 'fs'
-import { replace } from "@lib/utils/text"
-import { ensureDirExists } from "@lib/utils/files"
-import { PUBLIC_DIR } from "@lib/constants/directories"
-import { IComponent } from "./components"
+import { replace } from "@lib/utils/text.js"
+import { ensureDirExists } from "@lib/utils/files.js"
+import { PUBLIC_DIR } from "@lib/constants/directories.js"
+import { IComponent } from "./components.js"
 
 const logger = createLogger("DEBUG")
 const DEBUG_COMPONENT_HTML = path.resolve("./src/pages/debugComponent.html")

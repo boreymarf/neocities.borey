@@ -1,4 +1,4 @@
-import { IComponent } from "@lib/modules/components";
+import { IComponent } from "@lib/modules/components.js";
 
 export interface AppEvents {
 

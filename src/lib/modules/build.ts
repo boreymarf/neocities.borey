@@ -1,8 +1,8 @@
-import { Core } from "@lib/core/core";
-import { createLogger } from "@lib/utils/logging";
-import { Args } from "@lib/constants/args";
-import { ensureDirExists, isFile } from "@lib/utils/files";
-import { DIST_DIR, PUBLIC_DIR } from "@lib/constants/directories";
+import { Core } from "@lib/core/core.js";
+import { createLogger } from "@lib/utils/logging.js";
+import { Args } from "@lib/constants/args.js";
+import { ensureDirExists, isFile } from "@lib/utils/files.js";
+import { DIST_DIR, PUBLIC_DIR } from "@lib/constants/directories.js";
 
 import sass from 'sass';
 import fs, { existsSync } from 'fs';

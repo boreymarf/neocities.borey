@@ -121,10 +121,10 @@ export class Components {
 
       if (existingIndex !== -1) {
         this.components.splice(existingIndex, 1, component);
-        logger.info(`Replaced component "${config.name}" with the new information.`)
+        logger.info(`Replaced component "${config.name}" with the new information in the components list.`)
       } else {
         this.components.push(component);
-        logger.info(`Added new component "${config.name}".`)
+        logger.info(`Added new component "${config.name}" to the components list.`)
       }
 
       // Add watcher for every component if watch flag is set
@@ -152,18 +152,18 @@ export class Components {
 
   }
 
-  public buildAll() {
-    logger.info("Starting building all known modules...")
+  public async buildAll() {
+    logger.info("Starting building all known components...")
 
     for (let i = 0; i < this.components.length; i++) {
       const component: IComponent = this.components[i];
-      this.buildComponent(component)
+      await this.buildComponent(component)
     }
   }
 
-  public buildComponent(component: IComponent): void {
+  public async buildComponent(component: IComponent) {
 
-    logger.debug(`Building component ${component}...`)
+    logger.info(`Building component ${component.name}...`)
 
     const buildFilePath = component.absolutePaths.buildFile
     const buildMessage: BuildMessage = {
@@ -171,14 +171,20 @@ export class Components {
       data: component
     }
 
-    run(buildFilePath, buildMessage)
+    logger.debug("CHILD START")
+
+    await run(buildFilePath, buildMessage)
+
     const componentFile: IFile = {
       name: component.name,
       type: "file",
       content: component
     }
 
+    logger.debug("CHILD FINISHED")
+
     this.core.add(componentFile, "components")
+
   }
 }
 
