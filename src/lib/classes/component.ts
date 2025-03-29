@@ -4,8 +4,8 @@ import { ResultMessage } from "@lib/types/messages.js";
 import { IComponent } from "@lib/modules/components.js";
 
 import path from 'path';
-import fs from 'fs';
-import JSON5 from 'json5'
+import fs, { existsSync } from 'fs';
+import { DIST_DIR } from "@lib/constants/directories.js";
 
 export abstract class Component {
 
@@ -14,7 +14,6 @@ export abstract class Component {
   constructor() {
 
     process.on('message', async (message: any) => {
-      logger.info(message)
 
       if (message.type === "build") {
 
@@ -52,11 +51,6 @@ export abstract class Component {
 
   }
 
-  /**
-   * Sends the content of the `result` string to the `outputDir` directory (specified by the parent) 
-   * with a filename defined in the `config.json5` configuration file. 
-   * After writing the file, it terminates the child process.
-   */
   protected output(result: { html: string, css?: string, js?: string }): void {
 
     let htmlOutput
@@ -75,6 +69,22 @@ export abstract class Component {
     //const outputFilePath = path.resolve(outputDir, this.componentConfig.outputFileName)
     //fs.writeFileSync(outputFilePath, result, 'utf8')
 
+    // CSS
+    ensureDirExists(DIST_DIR)
+    const scssDist = path.resolve(DIST_DIR, "_dist.scss")
+
+    if (!existsSync(scssDist)) {
+      fs.writeFileSync(scssDist, "", 'utf8')
+    }
+
+    if (typeof this.configuration.absolutePaths.scssFile === 'string') {
+      logger.error("THIS WORKS??")
+      const scssDistContent = fs.readFileSync(scssDist, 'utf8')
+      const modifiedContent = scssDistContent + '\n/* Your appended content here */';
+      fs.writeFileSync(scssDist, modifiedContent, 'utf8');
+    }
+
+    // Result message
     if (process.send) {
       process.send({
         type: "result",

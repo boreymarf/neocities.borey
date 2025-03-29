@@ -1,12 +1,12 @@
-import { Core } from '@lib/core/core'
-import { isFile } from '@lib/utils/files'
-import { createLogger } from '@lib/utils/logging'
+import { Core } from '@lib/core/core.js'
+import { isFile } from '@lib/utils/files.js'
+import { createLogger } from '@lib/utils/logging.js'
 import { existsSync, readdirSync, readFileSync } from 'fs'
-import { run } from '@lib/utils/parent'
-import { IFile } from '@lib/classes/directory'
-import { COMPONENTS_DIR_PATH, DIST_DIR } from '@lib/constants/directories'
-import { BuildMessage } from '@lib/types/messages'
-import { Args } from '@lib/constants/args'
+import { run } from '@lib/utils/parent.js'
+import { IFile } from '@lib/classes/directory.js'
+import { COMPONENTS_DIR_PATH, DIST_DIR } from '@lib/constants/directories.js'
+import { BuildMessage } from '@lib/types/messages.js'
+import { Args } from '@lib/constants/args.js'
 
 import path from 'path'
 import JSON5 from 'json5'
@@ -22,9 +22,9 @@ export interface IComponent {
   absolutePaths: {
     componentDir: string;
     buildFile: string;
+    scssFile: string
     outputs: {
       html: string | Record<string, string>;
-      css?: string;
       js?: string;
       assets?: string;
     };
@@ -33,9 +33,9 @@ export interface IComponent {
   // Copies config.json5 file every component has
   config: {
     buildFilePath: string;
+    scssFile: string
     output: {
       html: string | Record<string, string>;
-      css?: string;
       js?: string;
       assets?: string;
     };
@@ -93,20 +93,20 @@ export class Components {
       }
 
       // Creating absolute paths
+      // BUG: scss file can be null
       const config = JSON5.parse(readFileSync(configPath, 'utf8'))
       const component: IComponent = {
         name: config.name,
         absolutePaths: {
           componentDir: dirPath,
           buildFile: path.join(dirPath, config.buildFilePath),
+          scssFile: path.resolve(dirPath, config.scssFile),
           outputs: {
             html: path.join(DIST_DIR, config.output.html)
           },
         },
         config: config
       }
-
-
 
       // Some more checks
       if (!existsSync(component.absolutePaths.buildFile)) {
@@ -171,8 +171,6 @@ export class Components {
       data: component
     }
 
-    logger.debug("CHILD START")
-
     await run(buildFilePath, buildMessage)
 
     const componentFile: IFile = {
@@ -180,8 +178,6 @@ export class Components {
       type: "file",
       content: component
     }
-
-    logger.debug("CHILD FINISHED")
 
     this.core.add(componentFile, "components")
 

@@ -18,6 +18,7 @@ export async function run(sourcePath: string, message?: BaseMessage): Promise<an
       cwd: process.cwd()
     });
 
+    // Handle logging
     child.stdout?.on('data', (data) => logger.log(`${data}`.trim()));
     child.stderr?.on('data', (data) => logger.error(`${data}`.trim()));
 

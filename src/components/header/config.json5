@@ -4,9 +4,9 @@
   // Relative file path to the build script
   buildFilePath: "build.ts",
   // Relative paths to the output
+  scssFile: "src/_style.scss"
   output: {
     html: "nothingburger.html",
-    css: "",
     js: "",
   },
   dependencies: {

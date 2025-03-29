@@ -2,24 +2,13 @@
 // THIS FILE IS USED PURELY FOR TESTING SNIPPETS OF CODE //
 // ----------------------------------------------------- //
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 import ora from "ora";
+import consola from "consola";
 
-for (let i = 0; i < 10; i++) {
-  await testWithSpinner();
-}
+const spinner = ora("Building component...").start();
 
-async function testWithSpinner() {
-  const spinner = ora({
-    text: "Building component...",
-    spinner: "dots", // Try "arc", "dots", "line", etc.
-  }).start();
+// Works alongside Consola
+consola.info("Consola log while spinner is active");
 
-  // Simulate work (3 seconds)
-  await wait(1000);
-
-  spinner.succeed("Building component... done!");
-}
-
-await wait(10000000)
+// Later...
+spinner.succeed("Component built!");

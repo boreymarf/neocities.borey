@@ -39,7 +39,7 @@ export class Build {
   public buildSASS() {
 
     // Creates partial scss file used to import other components' scss files
-    // Will crash if it doesn't exist for some reason
+    // Will crash if it doesn't exist
     if (!existsSync(path.join(DIST_DIR, "_dist.scss"))) {
       fs.writeFileSync(path.join(DIST_DIR, "_dist.scss"), "", "utf8")
     }
@@ -59,7 +59,7 @@ export class Build {
     let cssOutput = result.css;
     if (Args.isDebug && result.sourceMap) {
       // Append source map URL comment
-      // HACK: I don't know if it should be hard coded
+      // I don't know if it should be hard coded
       cssOutput += `\n/*# sourceMappingURL=style.css.map */`;
     }
 
@@ -74,7 +74,6 @@ export class Build {
   }
 
   public async createWatchers(): Promise<void> {
-    logger.info("Watcher added for SCSS.")
 
     // Create watcher for all scss files
     const SRC_DIR = path.resolve("./src/")
@@ -89,6 +88,7 @@ export class Build {
           this.buildSASS()
         }
       })
-  }
 
+    logger.info("Watcher added for SCSS.")
+  }
 }

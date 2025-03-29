@@ -1,9 +1,6 @@
 import { Component } from "@lib/classes/component.js";
 import { replace } from "@lib/utils/text.js";
 
-import fs from 'fs'
-import path from "path";
-
 class Header extends Component {
 
   build() {
@@ -16,8 +13,4 @@ class Header extends Component {
 
 }
 
-try {
-  new Header()
-} catch (error) {
-  throw new Error(error)
-}
+new Header()
